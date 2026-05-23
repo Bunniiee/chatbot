@@ -1,0 +1,12 @@
+[build]
+builder = "DOCKER"
+
+[[services]]
+name = "backend"
+root = "backend"
+port = 8000
+
+[[services]]
+name = "frontend"
+root = "frontend"
+port = 80

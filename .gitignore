@@ -1,0 +1,15 @@
+node_modules/
+dist/
+build/
+.cache/
+*.log
+
+__pycache__/
+*.py[cod]
+*.pyo
+venv/
+.env
+
+*.tsbuildinfo
+
+.zenflow/
