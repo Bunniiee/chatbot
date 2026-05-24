@@ -1,4 +1,4 @@
-from sqlalchemy import Column, String, DateTime, Numeric, Integer, ForeignKey
+from sqlalchemy import Column, String, DateTime, Numeric, Integer, ForeignKey, Text
 from sqlalchemy.dialects.postgresql import UUID
 from ..database import Base
 import uuid
@@ -14,7 +14,12 @@ class InferenceLog(Base):
     request_ts = Column(DateTime(timezone=True), nullable=False)
     response_ts = Column(DateTime(timezone=True))
     latency_ms = Column(Numeric(10, 2))
+    stream_ttfb_ms = Column(Numeric(10, 2))
+    prompt_tokens = Column(Integer)
+    completion_tokens = Column(Integer)
+    total_tokens = Column(Integer)
     status = Column(String, nullable=False)
+    error_message = Column(String)
     input_preview = Column(String)
     output_preview = Column(String)
     ingested_at = Column(DateTime(timezone=True), server_default=func.now())

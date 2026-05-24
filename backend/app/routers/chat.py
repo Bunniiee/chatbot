@@ -85,6 +85,14 @@ async def send_message(
     if not conv:
         raise HTTPException(status_code=404, detail="Conversation not found")
 
+    # Fetch existing message history before saving the new message
+    history_result = await db.execute(
+        select(Message)
+        .where(Message.conversation_id == conv_id)
+        .order_by(Message.created_at.asc())
+    )
+    history = history_result.scalars().all()
+
     # Save user message
     user_msg = Message(
         conversation_id=conv_id,
@@ -94,15 +102,19 @@ async def send_message(
     db.add(user_msg)
     await db.commit()
 
+    # Build full message history for the LLM
+    messages = [{"role": m.role, "content": m.content} for m in history]
+    messages.append({"role": "user", "content": payload.content})
+
     # Call LLM
     wrapper = LLMWrapper(
         provider=conv.provider,
         model=conv.model,
         ingest_url=settings.INGEST_URL,
     )
-    
+
     response = await wrapper.chat(
-        [{"role": "user", "content": payload.content}], 
+        messages,
         conversation_id,
         stream=payload.stream
     )

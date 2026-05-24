@@ -1,23 +1,25 @@
 import { useEffect, useState } from 'react';
-import { getMetricsSummary } from '../lib/api';
+import { getMetricsSummary, getMetricsTimeseries } from '../lib/api';
 import { 
   BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, 
-  LineChart, Line, AreaChart, Area 
+  AreaChart, Area 
 } from 'recharts';
 
 export default function Dashboard() {
   const [metrics, setMetrics] = useState({ avg_latency: 0, total_requests: 0, error_rate: 0 });
-  const [loading, setLoading] = useState(true);
+  const [chartData, setChartData] = useState<{ time: string; latency: number; requests: number; errors: number }[]>([]);
 
   useEffect(() => {
     const fetchMetrics = async () => {
       try {
-        const res = await getMetricsSummary();
-        setMetrics(res.data);
+        const [summaryRes, timeseriesRes] = await Promise.all([
+          getMetricsSummary(),
+          getMetricsTimeseries(),
+        ]);
+        setMetrics(summaryRes.data);
+        setChartData(timeseriesRes.data);
       } catch (error) {
         console.error('Failed to fetch metrics:', error);
-      } finally {
-        setLoading(false);
       }
     };
     fetchMetrics();
@@ -27,19 +29,8 @@ export default function Dashboard() {
 
   const summaryCards = [
     { title: 'Avg Latency', value: `${metrics.avg_latency}ms`, sub: 'Target < 500ms', color: 'text-blue-400' },
-    { title: 'Total Requests', value: metrics.total_requests, sub: 'Last 24 hours', color: 'text-purple-400' },
+    { title: 'Total Requests', value: metrics.total_requests, sub: 'Last 12 hours', color: 'text-purple-400' },
     { title: 'Error Rate', value: `${metrics.error_rate}%`, sub: 'Target < 1%', color: metrics.error_rate > 5 ? 'text-red-400' : 'text-green-400' },
-  ];
-
-  // Mock timeseries data for visualization
-  const chartData = [
-    { time: '10:00', latency: 120, requests: 45, errors: 1 },
-    { time: '11:00', latency: 150, requests: 52, errors: 0 },
-    { time: '12:00', latency: 450, requests: 89, errors: 4 },
-    { time: '13:00', latency: 180, requests: 61, errors: 1 },
-    { time: '14:00', latency: 140, requests: 48, errors: 0 },
-    { time: '15:00', latency: 130, requests: 55, errors: 0 },
-    { time: '16:00', latency: 160, requests: 67, errors: 2 },
   ];
 
   return (

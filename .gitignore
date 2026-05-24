@@ -13,3 +13,4 @@ venv/
 *.tsbuildinfo
 
 .zenflow/
+backend_log.txt  

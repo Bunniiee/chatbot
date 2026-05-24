@@ -13,6 +13,7 @@ class InferenceLogCreate(BaseModel):
     request_ts: datetime
     response_ts: Optional[datetime] = None
     latency_ms: Optional[float] = None
+    stream_ttfb_ms: Optional[float] = None
     prompt_tokens: Optional[int] = None
     completion_tokens: Optional[int] = None
     total_tokens: Optional[int] = None

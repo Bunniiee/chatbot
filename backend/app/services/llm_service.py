@@ -10,13 +10,32 @@ class BaseProvider(ABC):
 
 class MockProvider(BaseProvider):
     async def complete(self, messages: list, model: str, stream: bool = False, **kwargs):
+        prompt_tokens = sum(len(m.get("content", "").split()) for m in messages)
         if stream:
             async def generator():
                 full_text = f"Mock streaming response from {model}."
-                for word in full_text.split():
+                words = full_text.split()
+                for word in words:
                     yield {"content": word + " ", "role": "assistant"}
+                completion_tokens = len(words)
+                yield {
+                    "content": "",
+                    "usage": {
+                        "prompt_tokens": prompt_tokens,
+                        "completion_tokens": completion_tokens,
+                        "total_tokens": prompt_tokens + completion_tokens,
+                    },
+                }
             return generator()
-        return {"content": f"Mock response from {model}.", "role": "assistant"}
+        content = f"Mock response from {model}."
+        completion_tokens = len(content.split())
+        return {
+            "content": content,
+            "role": "assistant",
+            "prompt_tokens": prompt_tokens,
+            "completion_tokens": completion_tokens,
+            "total_tokens": prompt_tokens + completion_tokens,
+        }
 
 
 class AnthropicProvider(BaseProvider):

@@ -25,3 +25,4 @@ export const sendMessage = (conversationId: string, content: string) =>
   api.post(`/conversations/${conversationId}/messages`, { content });
 
 export const getMetricsSummary = () => api.get('/metrics/summary');
+export const getMetricsTimeseries = () => api.get('/metrics/timeseries');
