@@ -37,8 +37,6 @@ cp .env.example .env
 docker compose up --build
 ```
 
-Open **http://localhost**
-
 ---
 
 ### Option 2 — Local Development
@@ -67,7 +65,5 @@ cd frontend
 npm install
 npm run dev
 ```
-
-Open **http://localhost:5173**
 
 
