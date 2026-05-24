@@ -1,8 +1,0 @@
-fix all observability pipeline bugs
-
-- map event_id to id in persist_log, drop unknown schema fields
-- add real timeseries endpoint with hourly aggregation
-- dashboard fetches live timeseries data instead of hardcoded array
-- mock provider emits usage chunk with token counts
-- add vite-env.d.ts for ImportMeta.env TypeScript support
-- remove unused imports and loading state in Dashboard
